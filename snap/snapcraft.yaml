@@ -1,0 +1,64 @@
+name: chromium-browser
+version: 59.0.3071.71
+summary: Chromium web browser, open-source version of Chrome
+description: |
+ An open-source browser project that aims to build a safer, faster, and more
+ stable way for all Internet users to experience the web.
+confinement: strict
+
+apps:
+  chromium-browser:
+    command: desktop-launch chromium-browser.launcher
+    desktop: usr/share/applications/chromium-browser.desktop
+    plugs:
+      - browser-sandbox
+      - camera
+      - cups-control
+      - gsettings
+      - home
+      - mount-observe
+      - network
+      - network-manager
+      - opengl
+      - pulseaudio
+      - screen-inhibit-control
+      - unity7 # required for xdg-open to work
+      - upower-observe
+      - x11
+
+plugs:
+  browser-sandbox:
+    interface: browser-support
+    allow-sandbox: true
+
+parts:
+  ppa-build:
+    plugin: nil
+    build-packages:
+      - software-properties-common
+    stage-packages:
+      - libgl1-mesa-glx
+      - libmirclient9 # not needed starting with chromium 60, see https://chromium.googlesource.com/chromium/src/+/d631661
+      - libnss3
+      - pulseaudio
+    prepare: |
+      apt install software-properties-common
+      V=59.0.3071.71-0ubuntu0.16.04.1285
+      add-apt-repository -y ppa:osomon/chromium-next
+      apt update
+      apt install -y chromium-browser=$V chromium-browser-l10n=$V chromium-codecs-ffmpeg-extra=$V
+    install: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib
+      cp -R /usr/lib/chromium-browser $SNAPCRAFT_PART_INSTALL/usr/lib/
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/bin
+      cp /usr/bin/chromium-browser $SNAPCRAFT_PART_INSTALL/usr/bin/
+      mkdir -p $SNAPCRAFT_PART_INSTALL/etc
+      cp -R /etc/chromium-browser $SNAPCRAFT_PART_INSTALL/etc/
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
+      cp -R /usr/share/applications/chromium-browser.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/
+  launcher:
+    plugin: dump
+    source: snap
+    after: [desktop-gtk3]
+    organize:
+      chromium-browser.launcher: bin/

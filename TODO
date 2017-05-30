@@ -1,0 +1,8 @@
+TO DO:
+ - Add support for --temp-profile command-line switch.
+ - Ensure that custom --user-data-dir is in $SNAP_USER_COMMON (see chrome-test snap).
+ - Clean up resulting snap to remove unneeded stuff.
+
+Things known not to work:
+ - Opening folder or downloaded file with xdg-open, because snapd-xdg-open only accepts URLs with the http, https or mailto schemes. Local files or folders are being rejected.
+ - Flash plugin: cannot load the plugin from outside the snap.

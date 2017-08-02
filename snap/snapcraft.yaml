@@ -1,5 +1,5 @@
 name: chromium-browser
-version: 59.0.3071.71
+version: 60.0.3112.78
 summary: Chromium web browser, open-source version of Chrome
 description: |
  An open-source browser project that aims to build a safer, faster, and more
@@ -38,12 +38,11 @@ parts:
       - software-properties-common
     stage-packages:
       - libgl1-mesa-glx
-      - libmirclient9 # not needed starting with chromium 60, see https://chromium.googlesource.com/chromium/src/+/d631661
       - libnss3
       - pulseaudio
     prepare: |
       apt install software-properties-common
-      V=59.0.3071.71-0ubuntu0.16.04.1285
+      V=60.0.3112.78-0ubuntu0.16.04.1297
       add-apt-repository -y ppa:osomon/chromium-next
       apt update
       apt install -y chromium-browser=$V chromium-browser-l10n=$V chromium-codecs-ffmpeg-extra=$V

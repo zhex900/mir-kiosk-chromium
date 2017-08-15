@@ -1,4 +1,4 @@
-name: chromium-browser
+name: chromium
 version: 60.0.3112.78
 summary: Chromium web browser, open-source version of Chrome
 description: |
@@ -7,7 +7,7 @@ description: |
 confinement: strict
 
 apps:
-  chromium-browser:
+  chromium:
     command: desktop-launch chromium-browser.launcher
     desktop: usr/share/applications/chromium-browser.desktop
     plugs:

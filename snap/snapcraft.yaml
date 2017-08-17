@@ -57,6 +57,7 @@ parts:
       cp -R /etc/chromium-browser $SNAPCRAFT_PART_INSTALL/etc/
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
       cp -R /usr/share/applications/chromium-browser.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/
+      chmod 4555 $SNAPCRAFT_PART_INSTALL/usr/lib/chromium-browser/chrome-sandbox
   launcher:
     plugin: dump
     source: snap

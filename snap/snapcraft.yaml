@@ -37,6 +37,8 @@ parts:
     build-packages:
       - software-properties-common
     stage-packages:
+      - fonts-noto-cjk
+      - fonts-thai-tlwg
       - libgl1-mesa-glx
       - libnss3
       - pulseaudio

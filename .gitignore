@@ -1,4 +1,5 @@
 parts
 prime
+snap/.snapcraft
 stage
 chromium-browser_*.snap

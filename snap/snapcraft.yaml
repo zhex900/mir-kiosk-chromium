@@ -37,6 +37,7 @@ parts:
     build-packages:
       - software-properties-common
     stage-packages:
+      - fonts-cantarell
       - fonts-noto-cjk
       - fonts-thai-tlwg
       - libgl1-mesa-glx

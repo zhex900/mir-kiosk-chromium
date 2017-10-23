@@ -9,7 +9,7 @@ confinement: strict
 apps:
   chromium:
     command: desktop-launch chromium-browser.launcher
-    desktop: usr/share/applications/chromium-browser.desktop
+    desktop: usr/share/applications/chromium.desktop
     plugs:
       - browser-sandbox
       - camera

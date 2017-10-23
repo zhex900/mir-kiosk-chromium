@@ -57,8 +57,14 @@ parts:
       cp /usr/bin/chromium-browser $SNAPCRAFT_PART_INSTALL/usr/bin/
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc
       cp -R /etc/chromium-browser $SNAPCRAFT_PART_INSTALL/etc/
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps
+      cp /usr/share/icons/hicolor/scalable/apps/chromium-browser.svg \
+          $SNAPCRAFT_PART_INSTALL/usr/share/icons/hicolor/scalable/apps/chromium.svg
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/applications
-      cp -R /usr/share/applications/chromium-browser.desktop $SNAPCRAFT_PART_INSTALL/usr/share/applications/
+      cp /usr/share/applications/chromium-browser.desktop \
+          $SNAPCRAFT_PART_INSTALL/usr/share/applications/chromium.desktop
+      sed -i -e "s:^Icon=chromium-browser$:Icon=/usr/share/icons/hicolor/scalable/apps/chromium.svg:" \
+          $SNAPCRAFT_PART_INSTALL/usr/share/applications/chromium.desktop
       chmod 4555 $SNAPCRAFT_PART_INSTALL/usr/lib/chromium-browser/chrome-sandbox
   launcher:
     plugin: dump

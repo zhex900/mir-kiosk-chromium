@@ -38,10 +38,6 @@ parts:
     build-packages:
       - software-properties-common
     stage-packages:
-      - fonts-cantarell
-      - fonts-noto-cjk
-      - fonts-roboto
-      - fonts-thai-tlwg
       - libgl1-mesa-glx
       - libnss3
       - pulseaudio
@@ -88,7 +84,6 @@ parts:
       - libgtk-3-dev
     stage-packages:
       - libxkbcommon0  # XKB_CONFIG_ROOT
-      - ttf-ubuntu-font-family
       - dmz-cursor-theme
       - light-themes
       - adwaita-icon-theme
@@ -101,12 +96,3 @@ parts:
       - unity-gtk3-module
       - libappindicator3-1
       - locales-all
-
-  font-clear-sans-ttf:
-    # Until snapd can expose the host system's fonts to snaps (see
-    # https://forum.snapcraft.io/t/1796), ship the Clear Sans font family from
-    # the Solus project (see https://forum.snapcraft.io/t/2278/3).
-    source: https://packages.solus-project.com/unstable/f/font-clear-sans-ttf/font-clear-sans-ttf-1.00-3-1-x86_64.eopkg
-    source-type: zip
-    plugin: nil
-    install: tar -C $SNAPCRAFT_PART_INSTALL -x -f install.tar.xz

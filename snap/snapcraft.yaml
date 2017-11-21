@@ -44,7 +44,7 @@ parts:
     prepare: |
       apt install software-properties-common
       V=62.0.3202.94-0ubuntu0.16.04.1317
-      add-apt-repository -y ppa:osomon/chromium-stable
+      add-apt-repository -y ppa:chromium-team/stable
       apt update
       apt install -y chromium-browser=$V chromium-browser-l10n=$V chromium-codecs-ffmpeg-extra=$V
     install: |

@@ -1,3 +1,73 @@
-#!/bin/sh
+#!/bin/bash
 
-exec "$SNAP/usr/lib/chromium-browser/chromium-browser" --no-default-browser-check --no-first-run "$@"
+if [ "$SNAP_ARCH" == "amd64" ]; then
+    ARCH="x86_64-linux-gnu"
+elif [ "$SNAP_ARCH" == "armhf" ]; then
+    ARCH="arm-linux-gnueabihf"
+elif [ "$SNAP_ARCH" == "arm64" ]; then
+    ARCH="aarch64-linux-gnu"
+else
+    ARCH="$SNAP_ARCH-linux-gnu"
+fi
+
+export MIR_LIBS=${SNAP}/mir-libs/$ARCH
+if [ ! -d ${MIR_LIBS} ] ; then
+    echo "####################################################################"
+    echo "ERROR: It appears ${SNAP_NAME}:mir-libs-1604 plug has not been connected."
+    echo "Please run:"
+    echo ""
+    echo "    snap install mir-kiosk --edge"
+    echo "    snap connect ${SNAP_NAME}:mir-libs mir-kiosk:mir-libs-1604"
+    echo ""
+    echo "###################################################################"
+    exit 1
+fi
+
+export PATH=$PATH:$SNAP/bin
+export LD_LIBRARY_PATH=$SNAP/usr/lib/$ARCH:$LD_LIBRARY_PATH
+
+export LD_PRELOAD=${SNAP}/lib/libxwayland-preload.so
+export SNAPPY_PRELOAD=${SNAP}
+
+# Mir config
+export MIR_SOCKET=/run/mir_socket
+export MIR_CLIENT_PLATFORM_PATH=${MIR_LIBS}/mir/client-platform
+export LD_LIBRARY_PATH="${MIR_LIBS}:$LD_LIBRARY_PATH"
+
+# Mesa Libs
+export LD_LIBRARY_PATH=${MIR_LIBS}/mesa:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=${MIR_LIBS}/mesa-egl:$LD_LIBRARY_PATH
+
+# XKB config
+export XKB_CONFIG_ROOT=$SNAP/usr/share/X11/xkb
+
+# XDG Config
+export XDG_CONFIG_HOME=$SNAP_DATA
+export XDG_CONFIG_DIRS=$SNAP/etc/xdg:$XDG_CONFIG_DIRS
+export XDG_CONFIG_DIRS=$SNAP/usr/xdg:$XDG_CONFIG_DIRS
+export XDG_DATA_DIRS=$SNAP/usr/share:$XDG_DATA_DIRS
+export XDG_DATA_HOME=$SNAP_DATA
+
+# needed for fontconfig
+export FONTCONFIG_PATH=$SNAP/etc/fonts/config.d
+export FONTCONFIG_FILE=$SNAP/etc/fonts/fonts.conf
+
+export ARCH
+
+export LC_ALL="C.UTF-8"
+
+#while true; do
+    port=0
+
+    while [ -e "/tmp/.X11-unix/X${port}" ]; do
+        let port+=1
+    done
+
+    XDG_RUNTIME_DIR=/run Xwayland -wr -terminate :${port} & pid=$! #-rootless removed
+
+    DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" --no-default-browser-check --no-first-run --no-sandbox "$@" --kiosk https://www.youtube.com --window-position=0,0
+
+    kill ${pid}
+#    echo "retrying hello-world in 1 second"
+#    sleep 1
+#done

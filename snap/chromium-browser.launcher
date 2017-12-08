@@ -29,6 +29,29 @@ export LD_LIBRARY_PATH=$SNAP/usr/lib/$ARCH:$LD_LIBRARY_PATH
 export LD_PRELOAD=${SNAP}/lib/libxwayland-preload.so
 export SNAPPY_PRELOAD=${SNAP}
 
+# Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1656340 is fixed)
+[ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
+
+# XDG_RUNTIME_DIR is /run/user/<uid>/snap.$SNAP, but is snap-specific. Wayland servers
+# will place their socket in the shared /run/user/<uid> directory, so symlink it into
+# this XDG_RUNTIME_DIR.
+# For details:
+# https://forum.snapcraft.io/t/wayland-dconf-and-xdg-runtime-dir/186/10
+if [ -n "$XDG_RUNTIME_DIR" ]; then
+    wdisplay="wayland-0"
+    if [ -n "$WAYLAND_DISPLAY" ]; then
+        wdisplay="$WAYLAND_DISPLAY"
+    fi
+    wayland_sockpath="$XDG_RUNTIME_DIR/../$wdisplay"
+    wayland_snappath="$XDG_RUNTIME_DIR/$wdisplay"
+    if [ -S "$wayland_sockpath" ]; then
+        # create the compat symlink for now
+        if [ ! -e "$wayland_snappath" ]; then
+            ln -s "$wayland_sockpath" "$wayland_snappath"
+        fi
+    fi
+fi
+
 # Mir config
 export MIR_SOCKET=/run/mir_socket
 export MIR_CLIENT_PLATFORM_PATH=${MIR_LIBS}/mir/client-platform
@@ -63,7 +86,7 @@ export LC_ALL="C.UTF-8"
         let port+=1
     done
 
-    XDG_RUNTIME_DIR=/run Xwayland -wr -terminate :${port} & pid=$! #-rootless removed
+    Xwayland -wr -terminate :${port} & pid=$! #-rootless removed
 
     DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" --no-default-browser-check --no-first-run --no-sandbox "$@" --kiosk https://www.youtube.com --window-position=0,0
 

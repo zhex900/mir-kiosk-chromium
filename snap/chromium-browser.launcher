@@ -10,26 +10,13 @@ else
     ARCH="$SNAP_ARCH-linux-gnu"
 fi
 
-export MIR_LIBS=${SNAP}/mir-libs/$ARCH
-if [ ! -d ${MIR_LIBS} ] ; then
-    echo "####################################################################"
-    echo "ERROR: It appears ${SNAP_NAME}:mir-libs-1604 plug has not been connected."
-    echo "Please run:"
-    echo ""
-    echo "    snap install mir-kiosk --edge"
-    echo "    snap connect ${SNAP_NAME}:mir-libs mir-kiosk:mir-libs-1604"
-    echo ""
-    echo "###################################################################"
-    exit 1
-fi
-
 export PATH=$PATH:$SNAP/bin
 export LD_LIBRARY_PATH=$SNAP/usr/lib/$ARCH:$LD_LIBRARY_PATH
 
 export LD_PRELOAD=${SNAP}/lib/libxwayland-preload.so
 export SNAPPY_PRELOAD=${SNAP}
 
-# Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1656340 is fixed)
+# Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1738197 is fixed)
 [ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
 
 # XDG_RUNTIME_DIR is /run/user/<uid>/snap.$SNAP, but is snap-specific. Wayland servers
@@ -86,7 +73,7 @@ export LC_ALL="C.UTF-8"
         let port+=1
     done
 
-    Xwayland -wr -terminate :${port} & pid=$! #-rootless removed
+    XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR/.. Xwayland -wr -reset -terminate :${port} & pid=$! #-rootless removed
 
     DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" --no-default-browser-check --no-first-run --no-sandbox "$@" --kiosk https://www.youtube.com --window-position=0,0
 

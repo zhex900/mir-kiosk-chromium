@@ -32,18 +32,12 @@ apps:
       - screen-inhibit-control
       - upower-observe
       - mir
-      - mir-libs
+      - wayland
 
 plugs:
   browser-sandbox:
     interface: browser-support
     allow-sandbox: true
-
-  mir-libs:
-    interface: content
-    target: mir-libs
-    content: mir0
-    default-provider: mir-kiosk:mir-libs-1604
 
 parts:
   ppa-build:

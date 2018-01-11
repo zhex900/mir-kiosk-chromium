@@ -176,11 +176,13 @@ redirect_path_full (const char *pathname, int check_parent, int only_if_absolute
 
     redirected_pathname = malloc (PATH_MAX);
 
+    // Chop trailing slash off preload_dir before using it
     if (preload_dir[strlen (preload_dir) - 1] == '/') {
         chop = 1;
     }
     strncpy (redirected_pathname, preload_dir, PATH_MAX - 1 - chop);
 
+    // If relative path, convert redirected_pathname to point to the current working dir
     if (pathname[0] != '/') {
         size_t cursize = strlen (redirected_pathname);
         if (getcwd (redirected_pathname + cursize, PATH_MAX - cursize) == NULL) {
@@ -190,6 +192,7 @@ redirect_path_full (const char *pathname, int check_parent, int only_if_absolute
         strncat (redirected_pathname, "/", PATH_MAX - 1 - strlen (redirected_pathname));
     }
 
+    // Construct absolute path to redirected asset
     strncat (redirected_pathname, pathname, PATH_MAX - 1 - strlen (redirected_pathname));
 
     if (check_parent) {
@@ -199,6 +202,7 @@ redirect_path_full (const char *pathname, int check_parent, int only_if_absolute
         }
     }
 
+    // If redirected asset exists, use it, else fall back to original request
     ret = _access (redirected_pathname, F_OK);
 
     if (check_parent && slash) {

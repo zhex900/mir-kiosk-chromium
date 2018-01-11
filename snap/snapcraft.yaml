@@ -47,7 +47,6 @@ parts:
       - libgnome-keyring0
       - libnss3
       - pulseaudio
-      - xwayland
     prepare: |
       apt install software-properties-common
       V=65.0.3325.146-0ubuntu0.16.04.1
@@ -78,6 +77,12 @@ parts:
     after: [desktop-gtk3-fixed-cache]
     organize:
       chromium-browser.launcher: bin/
+
+  xwayland:
+    plugin: nil
+    stage-packages:
+      - xwayland
+      - matchbox-window-manager
 
   xwayland-preload:
     plugin: cmake

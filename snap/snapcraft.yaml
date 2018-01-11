@@ -9,29 +9,27 @@ grade: devel
 
 apps:
   chromium:
-#    command: bin/runner-daemon
-#    daemon: simple
+    daemon: simple
     command: desktop-launch chromium-browser.launcher
     desktop: usr/share/applications/chromium.desktop
     environment:
       DISABLE_WAYLAND: 1
       CHROME_DESKTOP: chromium.desktop
     plugs:
-      - browser-sandbox
+      - browser-support
       - camera
       - cups-control
       - desktop
       - gsettings
+      - hardware-observe
       - home
       - mount-observe
       - network
-      - network-manager
+      - network-bind
       - opengl
       - password-manager-service
       - pulseaudio
       - screen-inhibit-control
-      - upower-observe
-      - mir
       - wayland
 
 plugs:
@@ -86,7 +84,3 @@ parts:
     source: xwayland-preload
     build-packages:
       - build-essential
-
-  glue:
-    plugin: dump
-    source: glue

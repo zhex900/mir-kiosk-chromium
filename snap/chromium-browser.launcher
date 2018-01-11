@@ -39,11 +39,6 @@ if [ -n "$XDG_RUNTIME_DIR" ]; then
     fi
 fi
 
-# Mir config
-export MIR_SOCKET=/run/mir_socket
-export MIR_CLIENT_PLATFORM_PATH=${MIR_LIBS}/mir/client-platform
-export LD_LIBRARY_PATH="${MIR_LIBS}:$LD_LIBRARY_PATH"
-
 # Mesa Libs
 export LD_LIBRARY_PATH=${MIR_LIBS}/mesa:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=${MIR_LIBS}/mesa-egl:$LD_LIBRARY_PATH
@@ -66,18 +61,30 @@ export ARCH
 
 export LC_ALL="C.UTF-8"
 
-#while true; do
+while true; do
     port=0
 
     while [ -e "/tmp/.X11-unix/X${port}" ]; do
         let port+=1
     done
 
-    XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR/.. Xwayland -wr -reset -terminate :${port} & pid=$! #-rootless removed
+    Xwayland -wr -reset -terminate :${port} & pid=$! #-rootless removed
 
-    DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" --no-default-browser-check --no-first-run --no-sandbox "$@" --kiosk https://www.youtube.com --window-position=0,0
+    DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
+        --no-default-browser-check --no-first-run \
+        --no-sandbox \
+        --window-position=0,0 \
+        --test-type \
+        --disable-gpu \
+        --kiosk https://www.youtube.com \
+        "$@"
+        # can't run as root and be sandboxed at the same time
+        # hint to X where window located
+        # hides the "warning sandboxing disabled" banner
+        # kiosk mode and url
+        # pass other flags
 
     kill ${pid}
-#    echo "retrying hello-world in 1 second"
-#    sleep 1
-#done
+    echo "retrying chromium-mir-browser in 1 second"
+    sleep 1
+done

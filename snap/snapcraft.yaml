@@ -9,14 +9,13 @@ grade: devel
 
 apps:
   chromium:
-    daemon: simple
     command: desktop-launch chromium-browser.launcher
     desktop: usr/share/applications/chromium.desktop
     environment:
       DISABLE_WAYLAND: 1
       CHROME_DESKTOP: chromium.desktop
     plugs:
-      - browser-support
+      - browser-sandbox
       - camera
       - cups-control
       - desktop
@@ -30,12 +29,26 @@ apps:
       - password-manager-service
       - pulseaudio
       - screen-inhibit-control
+      - x11-plug
+
+  xwayland:
+    command: desktop-launch xwayland.launcher
+    daemon: simple
+    slots:
+      - x11
+    plugs:
+      - mir # due to Mir-kiosk insisting on /dev/shm use
+      - opengl
       - wayland
+      - x11-plug # as it includes a window manager
 
 plugs:
   browser-sandbox:
     interface: browser-support
     allow-sandbox: true
+
+  x11-plug: # because cannot have identical plug/slot name in same yaml.
+    interface: x11
 
 parts:
   ppa-build:
@@ -77,6 +90,7 @@ parts:
     after: [desktop-gtk3-fixed-cache]
     organize:
       chromium-browser.launcher: bin/
+      xwayland.launcher: bin/
 
   xwayland:
     plugin: nil

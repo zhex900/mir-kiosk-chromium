@@ -10,10 +10,12 @@ grade: devel
 apps:
   chromium:
     command: desktop-launch chromium-browser.launcher
+    daemon: simple
     desktop: usr/share/applications/chromium.desktop
     environment:
       DISABLE_WAYLAND: 1
       CHROME_DESKTOP: chromium.desktop
+    slots: [ x11 ]
     plugs:
       - browser-sandbox
       - camera
@@ -22,6 +24,7 @@ apps:
       - gsettings
       - hardware-observe
       - home
+      - mir # due to mir-kiosk using /dev/shm in wayland implementation
       - mount-observe
       - network
       - network-bind
@@ -29,18 +32,8 @@ apps:
       - password-manager-service
       - pulseaudio
       - screen-inhibit-control
-      - x11-plug
-
-  xwayland:
-    command: desktop-launch xwayland.launcher
-    daemon: simple
-    slots:
-      - x11
-    plugs:
-      - mir # due to Mir-kiosk insisting on /dev/shm use
-      - opengl
       - wayland
-      - x11-plug # as it includes a window manager
+      - x11-plug
 
 plugs:
   browser-sandbox:
@@ -90,13 +83,13 @@ parts:
     after: [desktop-gtk3-fixed-cache]
     organize:
       chromium-browser.launcher: bin/
-      xwayland.launcher: bin/
+      i3.config: etc/
 
   xwayland:
     plugin: nil
     stage-packages:
       - xwayland
-      - matchbox-window-manager
+      - i3
 
   xwayland-preload:
     plugin: cmake

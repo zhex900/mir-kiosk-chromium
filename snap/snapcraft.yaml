@@ -83,6 +83,7 @@ parts:
     after: [desktop-gtk3-fixed-cache]
     organize:
       chromium-browser.launcher: bin/
+      chromium-policy.json: etc/chromium-browser/policies/managed/
       i3.config: etc/
 
   xwayland:

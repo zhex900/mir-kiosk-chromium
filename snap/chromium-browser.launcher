@@ -77,18 +77,27 @@ homepage="$(snapctl get homepage)"
 
 # Chromium bringup
 DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
-        --no-default-browser-check --no-first-run \
+        --no-default-browser-check \
+        --no-first-run \
+        --noerrdialogs \
+        --disable-restore-session-state \
+        --disable-infobars \
+        --disable-java \
+        --disable-translate \
+        --disable-suggestions-service \
+        --disable-save-password-bubble \
         --no-sandbox \
         --disable-gpu-sandbox \
         --dbus-stub \
         --disable-print-preview \
-        --start-fullscreen  --enable-logging=stderr \
-        --disable-infobars --kiosk \
-        --class="Browser" \
-        --app "${homepage}"
+        --kiosk-printing \
+        --start-fullscreen --enable-logging=stderr \
+        --ignore-gpu-blacklist --enable-native-gpu-memory-buffers \
+        --class=chromium \
+        --kiosk "${homepage}"
         # Cannot run as root and be sandboxed at the same time, but then need
         # to hide the "warning sandboxing disabled" banner
-        # app mode is like a kiosk
+        # kiosk-printing disables printing entirely
 
 kill $pid2
 kill $pid1

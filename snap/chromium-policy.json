@@ -1,0 +1,67 @@
+// Chromium policy - set default behaviour
+// Policy options from https://www.chromium.org/administrators/policy-list-3
+
+{
+	"DefaultCookiesSetting": 4,		// Keep cookies for duration of session
+	"DefaultPopupsSetting": 2,		// Do not allow any site to show popups
+	"DefaultNotificationsSetting": 2,	// Do not allow any site to show desktop notifications
+	"DefaultGeolocationSetting": 2,		// Do not allow any site to track user's physical location
+	"DefaultWebBluetoothGuardSetting": 2,	// Do not allow any site to request access to Bluetooth devices via the Web Bluetooth API
+//	"DefaultSearchProviderEnabled": false,	// Disable the default search provider
+	"EnableMediaRouter": false,		// Disable Google Cast
+	"HomepageLocation": "https://www.ubuntu.com",	// Set the homepage URL, prevents users from changing it
+
+// Media specific:
+	"DefaultMediaStreamSetting": 2,		// DEPRECATED: do not allow any site to access the camera and microphone
+	"AudioCaptureAllowed": false,		// Deny any audio input access
+//	"AudioCaptureAllowedUrls": ["https://www.example.com/", "https://[*.].example.edu/"],
+	"VideoCaptureAllowed": false,		// Deny video capture
+	"AudioOutputAllowed": true,		// Allow playing audio
+
+	"PasswordManagerEnabled": false,	// Disable saving passwords to the password manager
+	"AllowCrossOriginAuthPrompt": false,	// Disable third-party sub-content popping up a HTTP Basic Auth dialog box. Phishing defence.
+	"AllowDeletingBrowserHistory": false,	// Prevent user deleting browser history and download history, and prevent change of this setting.
+	"AllowFileSelectionDialogs": false,	// Prevent users opening file selection dialog
+	"AllowOutdatedPlugins": false,		// Outdated plugins can never run
+	"AlwaysOpenPdfExternally": false,	// Use built-in PDF reader. But doesn't stop user trying to use external PDF reader
+	"AutoFillEnabled": false,		// Disable Autofill
+	"AutofillCreditCardEnabled": false,	// Disable Autofill for credit cards
+	"BlockThirdPartyCookies": false,	// Block 3rd party cookies (can break some websites)
+	"BookmarkBarEnabled": false,		// Disable bookmarks bar
+	"BrowserAddPersonEnabled": false,	// Disable add person in user manager
+	"BrowserGuestModeEnabled": false,	// Disable guest mode in browser
+	"CloudPrintProxyEnabled": false,	// Disable cloud proxy printing
+	"CloudPrintSubmitEnabled": false,	// Disable CloudPrintSubmitEnabled
+	"ComponentUpdatesEnabled": false,	// Disable component updates in Chromium. Excludes certificate revocation list and safe browsing data
+	"DefaultBrowserSettingEnabled": false,	// Chromium will never check if it is the default browser and will disable user controls for setting this option.
+	"DeveloperToolsDisabled": true,		// Disable developer tools
+	"DeviceAllowBluetooth": false,		// Disable Bluetooth
+	"DisablePrintPreview": true,		// Disable Print Preview
+	"DisableSafeBrowsingProceedAnyway": false,	// User cannot proceeding from the Safe Browsing warning page
+	"DisableScreenshots": true,		// Disable taking screenshots using keyboard shortcuts or extension APIs
+//	"DiskCacheDir: "${user_home}/Chromium_cache", // Overrides the --disk-cache-dir= command line flag
+	"DiskCacheSize": 0,			// Default cache size: user unable to override. This overrides --disk-cache-size flag
+//	"DownloadDirectory": "/home/${user_name}/Downloads",	// User unable to override this
+	"DownloadRestrictions": 3,		// Block all downloads
+	"EditBookmarksEnabled": false,		// Disable bookmark editing
+	"ForceEphemeralProfiles": true,		// All profiles are ephemeral: on session end, all history, extensions and cookies are wiped
+	"ForceGoogleSafeSearch": true,		// SafeSearch always enabled
+	"ForceYouTubeRestrict": 2,		// Enforce Strict Restricted Mode for YouTube
+	"HardwareAccelerationModeEnabled": true,	// Use hardware acceleration when available
+	"IncognitoModeAvailability": 1,		// Incognite mode disabled (2 = force enabled)
+	"MetricsReportingEnabled": false,	// Disable reporting of usage and crash-related data
+	"PrintingEnabled": false,		// Disable printing
+	"QuicAllowed": false,			// Disallow QUIC protocol
+	"SSLErrorOverrideAllowed": false,	// Do not allow users to navigate sites that have SSL errors
+	"SafeBrowsingEnabled": true,		// SafeBrowsing is always enabled
+	"SafeBrowsingExtendedReportingOptInAllowed": false,	// Prevent sending of system info and page content to Google
+	"SavingBrowserHistoryDisabled": true,	// Disable saving browsing history
+	"SearchSuggestEnabled": true,		// Enable search suggestions
+	"ShowAppsShortcutInBookmarkBar": false,	// Hide Apps shortcut in booksmarks bar
+	"ShowHomeButton": true,			// Ensure Home button always shows on toolbar
+	"SuppressUnsupportedOSWarning": true,	// Suppress the unsupported OS warning
+	"TranslateEnabled": false,		// Disable Google Translate service
+//	"URLBlacklist": [],
+//	"URLWhitelist": [].
+//	"WebRtcUdpPortRange": "10000-11999",	// Restrict range of local UDP ports used by WebRTC
+}

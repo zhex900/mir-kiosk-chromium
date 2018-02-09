@@ -2,6 +2,7 @@
 // Policy options from https://www.chromium.org/administrators/policy-list-3
 
 {
+//	"ExtensionInstallForcelist": [],	// DISABLED - using preferences file to add these instead
 	"DefaultCookiesSetting": 4,		// Keep cookies for duration of session
 	"DefaultPopupsSetting": 2,		// Do not allow any site to show popups
 	"DefaultNotificationsSetting": 2,	// Do not allow any site to show desktop notifications

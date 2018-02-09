@@ -77,6 +77,21 @@ parts:
           -e "s:^Icon=chromium-browser$:Icon=/usr/share/icons/hicolor/scalable/apps/chromium.svg:" \
           $SNAPCRAFT_PART_INSTALL/usr/share/applications/chromium.desktop
       chmod 4555 $SNAPCRAFT_PART_INSTALL/usr/lib/chromium-browser/chrome-sandbox
+
+  kiosk-extension:
+    plugin: nil
+    source: git://github.com/cook-company/kiosk.git
+    build: |
+      bash ../../../snap/makekioskcrx.sh kiosk $PWD
+    build-packages: [ openssl, vim-common, zip ] # vim-common for xxd
+    install: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/var/www
+      cp kiosk.crx $SNAPCRAFT_PART_INSTALL/var/www
+      cp extension.id $SNAPCRAFT_PART_INSTALL
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/chromium-browser/extensions
+      extension=`cat extension.id`
+      cp "${extension}.json" $SNAPCRAFT_PART_INSTALL/usr/share/chromium-browser/extensions
+
   launcher:
     plugin: dump
     source: snap

@@ -75,6 +75,9 @@ DISPLAY=:${port} $SNAP/usr/bin/i3 -c $SNAP/etc/i3.config & pid2=$!
 # Get URL
 homepage="$(snapctl get homepage)"
 
+# Read Kiosk extension ID
+appid=$(< "$SNAP/extension.id")
+
 # Chromium bringup
 DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
         --no-default-browser-check \
@@ -89,12 +92,11 @@ DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
         --no-sandbox \
         --disable-gpu-sandbox \
         --dbus-stub \
-        --disable-print-preview \
-        --kiosk-printing \
         --start-fullscreen --enable-logging=stderr \
         --ignore-gpu-blacklist --enable-native-gpu-memory-buffers \
         --class=chromium \
-        --kiosk "${homepage}"
+        --app-id=$appid
+# "${homepage}"
         # Cannot run as root and be sandboxed at the same time, but then need
         # to hide the "warning sandboxing disabled" banner
         # kiosk-printing disables printing entirely

@@ -2,7 +2,7 @@
 // Policy options from https://www.chromium.org/administrators/policy-list-3
 
 {
-//	"ExtensionInstallForcelist": [],	// DISABLED - using preferences file to add these instead
+	"ExtensionInstallForcelist": [%%EXTENSION%%],	// Force-install extensions
 	"DefaultCookiesSetting": 4,		// Keep cookies for duration of session
 	"DefaultPopupsSetting": 2,		// Do not allow any site to show popups
 	"DefaultNotificationsSetting": 2,	// Do not allow any site to show desktop notifications
@@ -17,7 +17,6 @@
 	"AudioCaptureAllowed": false,		// Deny any audio input access
 //	"AudioCaptureAllowedUrls": ["https://www.example.com/", "https://[*.].example.edu/"],
 	"VideoCaptureAllowed": false,		// Deny video capture
-	"AudioOutputAllowed": true,		// Allow playing audio
 
 	"PasswordManagerEnabled": false,	// Disable saving passwords to the password manager
 	"AllowCrossOriginAuthPrompt": false,	// Disable third-party sub-content popping up a HTTP Basic Auth dialog box. Phishing defence.
@@ -36,7 +35,6 @@
 	"ComponentUpdatesEnabled": false,	// Disable component updates in Chromium. Excludes certificate revocation list and safe browsing data
 	"DefaultBrowserSettingEnabled": false,	// Chromium will never check if it is the default browser and will disable user controls for setting this option.
 	"DeveloperToolsDisabled": true,		// Disable developer tools
-	"DeviceAllowBluetooth": false,		// Disable Bluetooth
 	"DisablePrintPreview": true,		// Disable Print Preview
 	"DisableSafeBrowsingProceedAnyway": false,	// User cannot proceeding from the Safe Browsing warning page
 	"DisableScreenshots": true,		// Disable taking screenshots using keyboard shortcuts or extension APIs

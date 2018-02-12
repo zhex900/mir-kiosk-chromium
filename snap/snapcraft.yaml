@@ -85,12 +85,18 @@ parts:
       bash ../../../snap/makekioskcrx.sh kiosk $PWD
     build-packages: [ openssl, vim-common, zip ] # vim-common for xxd
     install: |
-      mkdir -p $SNAPCRAFT_PART_INSTALL/var/www
-      cp kiosk.crx $SNAPCRAFT_PART_INSTALL/var/www
       cp extension.id $SNAPCRAFT_PART_INSTALL
-      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/chromium-browser/extensions
       extension=`cat extension.id`
-      cp "${extension}.json" $SNAPCRAFT_PART_INSTALL/usr/share/chromium-browser/extensions
+      mkdir -p $SNAPCRAFT_PART_INSTALL/var/www
+      cp "${extension}.crx" $SNAPCRAFT_PART_INSTALL/var/www
+      mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
+      sed "s|%%EXTENSION%%|\"$extension;http://localhost:8088/updates.xml\"|g" \
+          < ../../../snap/chromium-policy.json.in \
+          > $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/chromium-policy.json
+      sed "s|%%EXTENSION%%|$extension|g" \
+          < ../../../snap/updates.xml.in \
+          > $SNAPCRAFT_PART_INSTALL/var/www/updates.xml
+
 
   launcher:
     plugin: dump
@@ -98,7 +104,7 @@ parts:
     after: [desktop-gtk3-fixed-cache]
     organize:
       chromium-browser.launcher: bin/
-      chromium-policy.json: etc/chromium-browser/policies/managed/
+      crx-server.py: bin/
       i3.config: etc/
 
   xwayland:

@@ -72,6 +72,9 @@ $SNAP/usr/bin/Xwayland -reset -terminate :${port} & pid1=$!
 sleep 1 #FIXME: racey
 DISPLAY=:${port} $SNAP/usr/bin/i3 -c $SNAP/etc/i3.config & pid2=$!
 
+# Launch simple HTTP server to provide necessary extensions
+python3 $SNAP/bin/crx-server.py & pid3=$!
+
 # Get URL
 homepage="$(snapctl get homepage)"
 
@@ -92,7 +95,7 @@ DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
         --no-sandbox \
         --disable-gpu-sandbox \
         --dbus-stub \
-        --start-fullscreen --enable-logging=stderr \
+        --enable-logging=stderr \
         --ignore-gpu-blacklist --enable-native-gpu-memory-buffers \
         --class=chromium \
         --app-id=$appid
@@ -101,5 +104,6 @@ DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
         # to hide the "warning sandboxing disabled" banner
         # kiosk-printing disables printing entirely
 
+kill $pid3
 kill $pid2
 kill $pid1

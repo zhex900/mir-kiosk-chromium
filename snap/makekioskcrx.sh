@@ -13,7 +13,6 @@ if test $# -ne 2; then
 fi
 name=$1
 dir=$2
-crx="$name.crx"
 pub="$name.pub"
 sig="$name.sig"
 zip="$name.zip"
@@ -31,11 +30,17 @@ manifestkey=$(openssl rsa -in "$key" -pubout -outform DER | openssl base64 -A)
 if [ ! -f "$dir/manifest.json.bak" ]; then
   mv "$dir/manifest.json" "$dir/manifest.json.bak"
 fi
-awk '/manifest_version/ { print; print "  key: \"$manifestkey\""; next }1' "$dir/manifest.json.bak" > "$dir/manifest.json"
+awk '/manifest_version/ { print; print "  \"key\": \"$manifestkey\","; print "  \"update_url\": \"http://localhost:8088/updates.xml\","; next }1' "$dir/manifest.json.bak" > "$dir/manifest.json"
+
+# calculate extension ID and save to file
+extension=$(openssl rsa -in "$key" -pubout -outform DER | shasum -a 256 | head -c32 | tr 0-9a-f a-p)
+echo "$extension" > extension.id
+
+crx="${extension}.crx"
 
 # zip up the crx dir
 cwd=$(pwd -P)
-(cd "$dir" && zip -qr -9 -x "manifest.json.bak" -X "$cwd/$zip" .)
+(cd "$dir" && zip -qr -9 -x "manifest.json.bak" ".git/*" -X "$cwd/$zip" .)
 # signature
 openssl sha1 -sha1 -binary -sign "$key" < "$zip" > "$sig"
 # public key
@@ -53,15 +58,3 @@ sig_len_hex=$(byte_swap $(printf '%08x\n' $(ls -l "$sig" | awk '{print $5}')))
   cat "$pub" "$sig" "$zip"
 ) > "$crx"
 echo "Wrote $crx"
-
-# calculate extension ID and save to file
-extension=$(openssl rsa -in "$key" -pubout -outform DER | shasum -a 256 | head -c32 | tr 0-9a-f a-p)
-echo "$extension" > extension.id
-
-# create Chromium preferences file to arrange pre-install
-cat > "${extension}.json" <<EOL
-{
-  "external_crx": "/etc/chromium-browser/${crx}",
-  "external_version": "1.0",
-}
-EOL

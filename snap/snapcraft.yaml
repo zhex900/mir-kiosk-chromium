@@ -1,5 +1,5 @@
 name: chromium
-version: 64.0.3282.140
+version: 64.0.3282.167
 summary: Chromium web browser, open-source version of Chrome
 description: |
  An open-source browser project that aims to build a safer, faster, and more
@@ -45,7 +45,7 @@ parts:
       - pulseaudio
     prepare: |
       apt install software-properties-common
-      V=64.0.3282.140-0ubuntu0.16.04.1
+      V=64.0.3282.167-0ubuntu0.16.04.1
       add-apt-repository -y ppa:chromium-team/stable
       apt update
       apt install -y chromium-browser=$V chromium-browser-l10n=$V chromium-codecs-ffmpeg-extra=$V

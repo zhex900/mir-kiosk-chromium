@@ -40,7 +40,7 @@ export LC_ALL="C.UTF-8"
 
 # XWayland bringup
 # Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1738197 is fixed)
-[ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
+[ ! -d "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
 
 # XDG_RUNTIME_DIR is /run/user/<uid>/snap.$SNAP, but is snap-specific. Wayland servers
 # will place their socket in the shared /run/user/<uid> directory, so symlink it into
@@ -81,16 +81,12 @@ homepage="$(snapctl get homepage)"
 # Read Kiosk extension ID
 appid=$(< "$SNAP/extension.id")
 
-# First run setup
-#if [ ! -e "$SNAP_USER_DATA/.configured" ]; then
-    python3 $SNAP/bin/configure-kiosk.py url '["https://www.ubuntu.com"]'
-    python3 $SNAP/bin/configure-kiosk.py username admin
-    python3 $SNAP/bin/configure-kiosk.py password admin
-    python3 $SNAP/bin/configure-kiosk.py local true
-#    python3 $SNAP/bin/configure-kiosk.py reset 1
-#else
-#    touch "$SNAP_USER_DATA/.configured"
-#fi
+python3 $SNAP/bin/configure-kiosk.py url '["https://www.ubuntu.com"]'
+python3 $SNAP/bin/configure-kiosk.py username admin
+python3 $SNAP/bin/configure-kiosk.py password admin
+python3 $SNAP/bin/configure-kiosk.py local true
+python3 $SNAP/bin/configure-kiosk.py reset 1
+
 
 # Chromium bringup
 DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \

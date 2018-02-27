@@ -83,6 +83,7 @@ parts:
     source: git://github.com/cook-company/kiosk.git
     build: |
       bash ../../../snap/makekioskcrx.sh kiosk $PWD
+    stage-packages: [ python3-leveldb, xdg-utils ] # to configure the kiosk extension from script    
     build-packages: [ openssl, vim-common, zip ] # vim-common for xxd
     install: |
       cp extension.id $SNAPCRAFT_PART_INSTALL
@@ -96,7 +97,10 @@ parts:
       sed "s|%%EXTENSION%%|$extension|g" \
           < ../../../snap/updates.xml.in \
           > $SNAPCRAFT_PART_INSTALL/var/www/updates.xml
-
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      sed "s|%%EXTENSION%%|$extension|g" \
+          < ../../../snap/configure-kiosk.py.in \
+          > $SNAPCRAFT_PART_INSTALL/bin/configure-kiosk.py
 
   launcher:
     plugin: dump

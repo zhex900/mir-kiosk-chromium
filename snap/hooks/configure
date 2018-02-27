@@ -4,3 +4,8 @@
 homepage="$(snapctl get homepage)"
 
 # Validate it, return non-zero if fail
+
+# Write to database
+LD_LIBRARY_PATH=$SNAP/usr/lib/x86_64-linux-gnu \
+PYTHONPATH=$SNAP/usr/lib/python3/site-packages:$SNAP/usr/lib/python3/dist-packages:$PYTHONPATH \
+    python3 $SNAP/bin/configure-kiosk.py url "[\"$homepage\"]"

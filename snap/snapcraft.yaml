@@ -80,27 +80,13 @@ parts:
 
   kiosk-extension:
     plugin: nil
-    source: git://github.com/cook-company/kiosk.git
-    build: |
-      bash ../../../snap/makekioskcrx.sh kiosk $PWD
-    stage-packages: [ python3-leveldb, xdg-utils ] # to configure the kiosk extension from script    
-    build-packages: [ openssl, vim-common, zip ] # vim-common for xxd
+    source: https://git.launchpad.net/~gerboland/+git/chromium-kiosk-app-snap
+    stage-packages: [ python3-leveldb ] # to configure the kiosk extension from script
     install: |
-      cp extension.id $SNAPCRAFT_PART_INSTALL
-      extension=`cat extension.id`
-      mkdir -p $SNAPCRAFT_PART_INSTALL/var/www
-      cp "${extension}.crx" $SNAPCRAFT_PART_INSTALL/var/www
+      mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
+      cp -R * $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
-      sed "s|%%EXTENSION%%|\"$extension;http://localhost:8088/updates.xml\"|g" \
-          < ../../../snap/chromium-policy.json.in \
-          > $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/chromium-policy.json
-      sed "s|%%EXTENSION%%|$extension|g" \
-          < ../../../snap/updates.xml.in \
-          > $SNAPCRAFT_PART_INSTALL/var/www/updates.xml
-      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
-      sed "s|%%EXTENSION%%|$extension|g" \
-          < ../../../snap/configure-kiosk.py.in \
-          > $SNAPCRAFT_PART_INSTALL/bin/configure-kiosk.py
+      cp ../../../snap/chromium-policy.json $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
 
   launcher:
     plugin: dump
@@ -108,7 +94,6 @@ parts:
     after: [desktop-gtk3-fixed-cache]
     organize:
       chromium-browser.launcher: bin/
-      crx-server.py: bin/
       i3.config: etc/
 
   xwayland:

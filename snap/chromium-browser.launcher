@@ -72,25 +72,41 @@ $SNAP/usr/bin/Xwayland -reset -terminate :${port} & pid1=$!
 sleep 1 #FIXME: racey
 DISPLAY=:${port} $SNAP/usr/bin/i3 -c $SNAP/etc/i3.config & pid2=$!
 
-# Launch simple HTTP server to provide necessary extensions
-python3 $SNAP/bin/crx-server.py & pid3=$!
-
 # Get URL
-homepage="$(snapctl get homepage)"
+url="$(snapctl get url)"
 
-# Read Kiosk extension ID
-appid=$(< "$SNAP/extension.id")
-
-# First run setup
-#if [ ! -e "$SNAP_USER_DATA/.configured" ]; then
-    python3 $SNAP/bin/configure-kiosk.py url '["https://www.ubuntu.com"]'
-    python3 $SNAP/bin/configure-kiosk.py username admin
-    python3 $SNAP/bin/configure-kiosk.py password admin
-    python3 $SNAP/bin/configure-kiosk.py local true
-#    python3 $SNAP/bin/configure-kiosk.py reset 1
-#else
-#    touch "$SNAP_USER_DATA/.configured"
-#fi
+# Prepare extension - copy from read-only filesystem, and generate settings.js
+cp -R $SNAP/etc/chromium-browser/kiosk-app /tmp
+cat >/tmp/kiosk-app/js/settings.js <<EOL
+var kiosk_settings = {
+"url": "${url}",
+"allowprint": false,
+"shownav": false,
+"local": false,
+"remote": false,
+"username": "",
+"password": "",
+"restart": false,
+"remoteschedule": false,
+"hidegslidescontrols": true,
+"hidecursor": false,
+"disablecontextmenu": true,
+"disabledrag": true,
+"disabletouchhighlight": true,
+"disableselection": true,
+"resetcache": false,
+"partition": false,
+"allownewwindow": false,
+"screensavertime": 0,
+"screensaverURL": "",
+"clearcookiesreset": true,
+"whitelist": "",
+"useragent": "",
+"authorization": "",
+"multipleurlmode": "",
+"rotaterate": "",
+}
+EOL
 
 # Chromium bringup
 DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
@@ -110,12 +126,13 @@ DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
         --ignore-gpu-blacklist --enable-native-gpu-memory-buffers \
         --class=chromium \
         --profile-directory=Default \
-        --app-id=$appid
-# "${homepage}"
+        --load-and-launch-app=/tmp/kiosk-app \
+        --silent-launch
         # Cannot run as root and be sandboxed at the same time, but then need
         # to hide the "warning sandboxing disabled" banner
         # kiosk-printing disables printing entirely
+        # "load-and-launch-app" loads app extension source from a directory, and launches
+        # "silent-launch" prevents normal Chromium window opening first
 
-kill $pid3
 kill $pid2
 kill $pid1

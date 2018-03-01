@@ -2,7 +2,6 @@
 // Policy options from https://www.chromium.org/administrators/policy-list-3
 
 {
-	"ExtensionInstallForcelist": [%%EXTENSION%%],	// Force-install extensions
 	"DefaultCookiesSetting": 4,		// Keep cookies for duration of session
 	"DefaultPopupsSetting": 2,		// Do not allow any site to show popups
 	"DefaultNotificationsSetting": 2,	// Do not allow any site to show desktop notifications
@@ -43,7 +42,6 @@
 //	"DownloadDirectory": "/home/${user_name}/Downloads",	// User unable to override this
 	"DownloadRestrictions": 3,		// Block all downloads
 	"EditBookmarksEnabled": false,		// Disable bookmark editing
-	"ForceEphemeralProfiles": true,		// All profiles are ephemeral: on session end, all history, extensions and cookies are wiped
 	"ForceGoogleSafeSearch": true,		// SafeSearch always enabled
 	"ForceYouTubeRestrict": 2,		// Enforce Strict Restricted Mode for YouTube
 	"HardwareAccelerationModeEnabled": true,	// Use hardware acceleration when available

@@ -82,7 +82,7 @@ parts:
     plugin: nil
     source: https://git.launchpad.net/~gerboland/+git/chromium-kiosk-app-snap
     source-type: git
-    stage-packages: [ python3-leveldb ] # to configure the kiosk extension from script
+    stage-packages: [ jq ] # ease using JSON in Bash
     install: |
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       cp -R * $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app

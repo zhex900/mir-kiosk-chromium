@@ -1,9 +1,65 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
-# Obtain URL value - can be single url, or JSON-array style list
-url="$(snapctl get url)"
+if [ "$SNAP_ARCH" == "amd64" ]; then
+    ARCH="x86_64-linux-gnu"
+elif [ "$SNAP_ARCH" == "armhf" ]; then
+    ARCH="arm-linux-gnueabihf"
+elif [ "$SNAP_ARCH" == "arm64" ]; then
+    ARCH="aarch64-linux-gnu"
+else
+    ARCH="$SNAP_ARCH-linux-gnu"
+fi
+export LD_LIBRARY_PATH=$SNAP/usr/lib/$ARCH:$LD_LIBRARY_PATH
+export PATH=$PATH:$SNAP/usr/bin
 
-# Validate it, return non-zero if fail
-# TODO
+_is_json_array() {
+    [[ $(echo $1 | jq '.[]' &> /dev/null; echo $?) == 0 ]]
+}
+
+_validate_url() {
+    url=$1
+    regex='^http(s)?://*'
+
+    if [[ ! $url =~ $regex ]]; then
+        # Problematic URL, print error and exit
+        echo "Error: URL \"${url}\" needs to start with http:// or https://"
+        exit 1
+    fi
+}
+
+validate_urls() {
+    urls=$1
+
+    # Single URL or JSON-array style list
+    if _is_json_array $urls; then
+        # Is an array or urls, validate each one
+        while read -r url; do
+            _validate_url $url
+        done < <(echo $urls | $JQ -c '.[]')
+    else
+        # Looks like single URL
+        _validate_url $urls
+    fi
+}
+
+validate_nonneg_float() {
+    if [[ ! $1 =~ ^[0-9]+\.?[0-9]*$ ]]; then
+        echo "Error: \"$2\" requires a non-negative float. Got \"$1\""
+        exit 1;
+    fi
+}
+
+validate_boolean() {
+    if [[ ! $1 =~ (true|false) ]]; then
+        echo "Error: \"$2\" accepts only true/false. Got \"$1\""
+        exit 1;
+    fi
+}
+
+
+validate_urls         $(snapctl get url)
+validate_nonneg_float $(snapctl get resettime)  "resettime"
+validate_boolean      $(snapctl get shownav)    "shownav"
+validate_boolean      $(snapctl get hidecursor) "hidecursor"
 
 snapctl restart $SNAP_NAME

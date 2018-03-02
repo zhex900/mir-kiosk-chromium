@@ -72,16 +72,30 @@ $SNAP/usr/bin/Xwayland -reset -terminate :${port} & pid1=$!
 sleep 1 #FIXME: racey
 DISPLAY=:${port} $SNAP/usr/bin/i3 -c $SNAP/etc/i3.config & pid2=$!
 
-# Get URL
+_is_json_array() {
+    [[ $(echo $1 | jq '.[]' &> /dev/null; echo $?) == 0 ]]
+}
+
+# Get URL - can be single url, or JSON-style array of urls. If former, need to
+# surround in double-quotes for later use
 url="$(snapctl get url)"
+if ! _is_json_array $url; then url="\"$url\""; fi
+
+# Time to reset in minutes (float)
+reset="$(snapctl get resettime)"
+# Show nav bar (true/false)
+shownav="$(snapctl get shownav)"
+# Hide cursor (true/false)
+hidecursor="$(snapctl get hidecursor)"
 
 # Prepare extension - copy from read-only filesystem, and generate settings.js
 cp -R $SNAP/etc/chromium-browser/kiosk-app /tmp
 cat >/tmp/kiosk-app/js/settings.js <<EOL
 var kiosk_settings = {
-"url": "${url}",
+"url": ${url},
+"reset": ${reset},
 "allowprint": false,
-"shownav": false,
+"shownav": ${shownav},
 "local": false,
 "remote": false,
 "username": "",
@@ -89,7 +103,7 @@ var kiosk_settings = {
 "restart": false,
 "remoteschedule": false,
 "hidegslidescontrols": true,
-"hidecursor": false,
+"hidecursor": ${hidecursor},
 "disablecontextmenu": true,
 "disabledrag": true,
 "disabletouchhighlight": true,

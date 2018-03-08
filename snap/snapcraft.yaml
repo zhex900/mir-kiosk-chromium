@@ -73,3 +73,13 @@ parts:
     after: [desktop-gtk3]
     organize:
       chromium-browser.launcher: bin/
+  shared-mime-info:
+    after: [launcher, ppa-build]
+    plugin: nil
+    source: .
+    stage-packages:
+      - shared-mime-info
+    build-attributes: [no-system-libraries]
+    install: |
+      set -eux
+      update-mime-database $SNAPCRAFT_PART_INSTALL/usr/share/mime

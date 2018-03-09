@@ -12,6 +12,7 @@ apps:
     desktop: usr/share/applications/chromium.desktop
     environment:
       DISABLE_WAYLAND: 1
+      CHROME_DESKTOP: chromium.desktop
     plugs:
       - browser-sandbox
       - camera

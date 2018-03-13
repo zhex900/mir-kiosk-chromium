@@ -24,6 +24,7 @@ apps:
       - network
       - network-manager
       - opengl
+      - password-manager-service
       - pulseaudio
       - screen-inhibit-control
       - unity7 # required for xdg-open to work
@@ -42,6 +43,7 @@ parts:
       - software-properties-common
     stage-packages:
       - libgl1-mesa-glx
+      - libgnome-keyring0
       - libnss3
       - pulseaudio
     prepare: |

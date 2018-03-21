@@ -40,8 +40,26 @@ plugs:
     interface: browser-support
     allow-sandbox: true
 
+  wayland-socket:
+    content: wayland-socket-directory
+    interface: content
+    target: $SNAP_DATA/wayland
+    default-provider: mir-kiosk
+
   x11-plug: # because cannot have identical plug/slot name in same yaml.
     interface: x11
+
+#layout:
+#  /usr/share/fonts:
+#    bind: $SNAP/usr/share/fonts
+#  /usr/share/X11:
+#    bind: $SNAP/usr/share/X11
+#  /usr/lib/xorg:
+#    bind: $SNAP/usr/lib/xorg
+#  /usr/lib/x86_64-linux-gnu/dri:
+#    bind: $SNAP/usr/lib/x86_64-linux-gnu/dri
+#  /usr/bin/xkbcomp:
+#    bind-file: $SNAP/usr/bin/xkbcomp
 
 parts:
   ppa-build:
@@ -87,24 +105,22 @@ parts:
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       cp -R * $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
-      cp ../../../snap/chromium-policy.json $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
+      cp ../../../glue/chromium-policy.json $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
 
   launcher:
     plugin: dump
-    source: snap
-    after: [desktop-gtk3-fixed-cache]
+    source: glue
+    after: [desktop-gtk3]
     organize:
       chromium-browser.launcher: bin/
       i3.config: etc/
+      fonts: usr/share/fonts
+      X11: usr/share/X11
+      xorg: usr/lib/xorg
 
   xwayland:
     plugin: nil
     stage-packages:
       - xwayland
+      - libegl1-mesa
       - i3
-
-  xwayland-preload:
-    plugin: cmake
-    source: xwayland-preload
-    build-packages:
-      - build-essential

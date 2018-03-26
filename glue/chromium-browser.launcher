@@ -10,14 +10,7 @@ else
     ARCH="$SNAP_ARCH-linux-gnu"
 fi
 
-export PATH=$PATH:$SNAP/bin
-export LD_LIBRARY_PATH=$SNAP/usr/lib/$ARCH:$LD_LIBRARY_PATH
-
-export LD_PRELOAD=${SNAP}/lib/libxwayland-preload.so
-export SNAPPY_PRELOAD=${SNAP}
-
 # Mesa Libs
-export LD_LIBRARY_PATH=${MIR_LIBS}/mesa:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=${MIR_LIBS}/mesa-egl:$LD_LIBRARY_PATH
 
 # XKB config
@@ -39,36 +32,16 @@ export ARCH
 export LC_ALL="C.UTF-8"
 
 # XWayland bringup
-# Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1738197 is fixed)
-[ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
-
-# XDG_RUNTIME_DIR is /run/user/<uid>/snap.$SNAP, but is snap-specific. Wayland servers
-# will place their socket in the shared /run/user/<uid> directory, so symlink it into
-# this XDG_RUNTIME_DIR.
-# For details:
-# https://forum.snapcraft.io/t/wayland-dconf-and-xdg-runtime-dir/186/10
-if [ -n "$XDG_RUNTIME_DIR" ]; then
-    wdisplay="wayland-0"
-    if [ -n "$WAYLAND_DISPLAY" ]; then
-        wdisplay="$WAYLAND_DISPLAY"
-    fi
-    wayland_sockpath="$XDG_RUNTIME_DIR/../$wdisplay"
-    wayland_snappath="$XDG_RUNTIME_DIR/$wdisplay"
-    if [ -S "$wayland_sockpath" ]; then
-        # create the compat symlink for now
-        if [ ! -e "$wayland_snappath" ]; then
-            ln -s "$wayland_sockpath" "$wayland_snappath"
-        fi
-    fi
-fi
-
 # Use new port number in case old server clean up wasn't successful
 port=0
 while [ -e "/tmp/.X11-unix/X${port}" ]; do
     let port+=1
 done
 
-$SNAP/usr/bin/Xwayland -reset -terminate :${port} & pid1=$!
+# Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1738197 is fixed)
+[ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
+
+XDG_RUNTIME_DIR=$SNAP_COMMON/wayland $SNAP/usr/bin/Xwayland -reset -terminate :${port} & pid1=$!
 sleep 1 #FIXME: racey
 DISPLAY=:${port} $SNAP/usr/bin/i3 -c $SNAP/etc/i3.config & pid2=$!
 

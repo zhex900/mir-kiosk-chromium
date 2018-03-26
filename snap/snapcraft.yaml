@@ -27,7 +27,7 @@ apps:
       - mir # due to mir-kiosk using /dev/shm in wayland implementation
       - mount-observe
       - network
-      - network-bind
+      - network-manager
       - opengl
       - password-manager-service
       - pulseaudio
@@ -40,10 +40,10 @@ plugs:
     interface: browser-support
     allow-sandbox: true
 
-  wayland-socket:
-    content: wayland-socket-directory
+  wayland-socket-dir:
+    content: wayland-socket-dir
     interface: content
-    target: $SNAP_DATA/wayland
+    target: $SNAP_COMMON/wayland
     default-provider: mir-kiosk
 
   x11-plug: # because cannot have identical plug/slot name in same yaml.

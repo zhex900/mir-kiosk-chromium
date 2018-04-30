@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# Xwayland needs to run as root (bug lp:1767372), so everything has to
+if [ "$EUID" -ne 0 ]
+    then echo "This needs to run as root"
+    exit
+fi
+
+WAYLAND_SOCKET_DIR=$SNAP_DATA/wayland
+
+# Ensure wayland-socket-dir connection established
+if [ ! -d $WAYLAND_SOCKET_DIR ]; then
+    echo "##################################################################################"
+    echo "You need to connect this snap to one which implements the wayland-socket-dir plug."
+    echo ""
+    echo "You can do this with these commands:"
+    echo "  snap install mir-kiosk --beta"
+    echo "  snap connect $SNAP_NAME:wayland-socket-dir mir-kiosk:wayland-socket-dir"
+    echo "##################################################################################"
+    exit 1
+fi
+
 if [ "$SNAP_ARCH" == "amd64" ]; then
     ARCH="x86_64-linux-gnu"
 elif [ "$SNAP_ARCH" == "armhf" ]; then
@@ -41,9 +61,11 @@ done
 # Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1738197 is fixed)
 [ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
 
-XDG_RUNTIME_DIR=$SNAP_COMMON/wayland $SNAP/usr/bin/Xwayland -reset -terminate :${port} & pid1=$!
+XDG_RUNTIME_DIR=$WAYLAND_SOCKET_DIR $SNAP/usr/bin/Xwayland -terminate :${port} & pid=$!
+trap "trap - SIGTERM && kill $pid" SIGINT SIGTERM EXIT # kill on signal or quit
+
 sleep 1 #FIXME: racey
-DISPLAY=:${port} $SNAP/usr/bin/i3 -c $SNAP/etc/i3.config & pid2=$!
+DISPLAY=:${port} $SNAP/usr/bin/i3 -c $SNAP/etc/i3.config
 
 _is_json_array() {
     [[ $(echo $1 | jq '.[]' &> /dev/null; echo $?) == 0 ]]
@@ -120,6 +142,3 @@ DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
         # kiosk-printing disables printing entirely
         # "load-and-launch-app" loads app extension source from a directory, and launches
         # "silent-launch" prevents normal Chromium window opening first
-
-kill $pid2
-kill $pid1

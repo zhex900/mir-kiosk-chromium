@@ -49,17 +49,16 @@ plugs:
   x11-plug: # because cannot have identical plug/slot name in same yaml.
     interface: x11
 
-#layout:
-#  /usr/share/fonts:
-#    bind: $SNAP/usr/share/fonts
-#  /usr/share/X11:
-#    bind: $SNAP/usr/share/X11
-#  /usr/lib/xorg:
-#    bind: $SNAP/usr/lib/xorg
-#  /usr/lib/x86_64-linux-gnu/dri:
-#    bind: $SNAP/usr/lib/x86_64-linux-gnu/dri
-#  /usr/bin/xkbcomp:
-#    bind-file: $SNAP/usr/bin/xkbcomp
+passthrough:
+  layout:
+    /usr/share/fonts:
+      bind: $SNAP/usr/share/fonts
+    /usr/share/X11:
+      bind: $SNAP/usr/share/X11
+    /usr/lib/xorg:
+      bind: $SNAP/usr/lib/xorg
+    /usr/bin/xkbcomp:
+      bind-file: $SNAP/usr/bin/xkbcomp
 
 parts:
   ppa-build:
@@ -114,9 +113,6 @@ parts:
     organize:
       chromium-browser.launcher: bin/
       i3.config: etc/
-      fonts: usr/share/fonts
-      X11: usr/share/X11
-      xorg: usr/lib/xorg
 
   xwayland:
     plugin: nil

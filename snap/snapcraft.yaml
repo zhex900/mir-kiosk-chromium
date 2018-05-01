@@ -43,7 +43,7 @@ plugs:
   wayland-socket-dir:
     content: wayland-socket-dir
     interface: content
-    target: $SNAP_COMMON/wayland
+    target: $SNAP_DATA/wayland
     default-provider: mir-kiosk
 
   x11-plug: # because cannot have identical plug/slot name in same yaml.

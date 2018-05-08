@@ -20,37 +20,6 @@ if [ ! -d $WAYLAND_SOCKET_DIR ]; then
     exit 1
 fi
 
-if [ "$SNAP_ARCH" == "amd64" ]; then
-    ARCH="x86_64-linux-gnu"
-elif [ "$SNAP_ARCH" == "armhf" ]; then
-    ARCH="arm-linux-gnueabihf"
-elif [ "$SNAP_ARCH" == "arm64" ]; then
-    ARCH="aarch64-linux-gnu"
-else
-    ARCH="$SNAP_ARCH-linux-gnu"
-fi
-
-# Mesa Libs
-export LD_LIBRARY_PATH=${MIR_LIBS}/mesa-egl:$LD_LIBRARY_PATH
-
-# XKB config
-export XKB_CONFIG_ROOT=$SNAP/usr/share/X11/xkb
-
-# XDG Config
-export XDG_CONFIG_HOME=$SNAP_DATA
-export XDG_CONFIG_DIRS=$SNAP/etc/xdg:$XDG_CONFIG_DIRS
-export XDG_CONFIG_DIRS=$SNAP/usr/xdg:$XDG_CONFIG_DIRS
-export XDG_DATA_DIRS=$SNAP/usr/share:$XDG_DATA_DIRS
-export XDG_DATA_HOME=$SNAP_DATA
-
-# needed for fontconfig
-export FONTCONFIG_PATH=$SNAP/etc/fonts/config.d
-export FONTCONFIG_FILE=$SNAP/etc/fonts/fonts.conf
-
-export ARCH
-
-export LC_ALL="C.UTF-8"
-
 # XWayland bringup
 # Use new port number in case old server clean up wasn't successful
 port=0
@@ -61,7 +30,10 @@ done
 # Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1738197 is fixed)
 [ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
 
-XDG_RUNTIME_DIR=$WAYLAND_SOCKET_DIR $SNAP/usr/bin/Xwayland -terminate :${port} & pid=$!
+SNAPPY_PRELOAD=$SNAP \
+LD_PRELOAD=$SNAP/lib/libxwayland-preload.so \
+XDG_RUNTIME_DIR=$WAYLAND_SOCKET_DIR \
+    $SNAP/usr/bin/Xwayland -terminate :${port} & pid=$!
 trap "trap - SIGTERM && kill $pid" SIGINT SIGTERM EXIT # kill on signal or quit
 
 sleep 1 #FIXME: racey
@@ -134,9 +106,9 @@ DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
         --enable-logging=stderr \
         --ignore-gpu-blacklist --enable-native-gpu-memory-buffers \
         --class=chromium \
-        --profile-directory=Default \
-        --load-and-launch-app=/tmp/kiosk-app \
-        --silent-launch
+        --profile-directory=Default #\
+        #--load-and-launch-app=/tmp/kiosk-app \
+        #--silent-launch
         # Cannot run as root and be sandboxed at the same time, but then need
         # to hide the "warning sandboxing disabled" banner
         # kiosk-printing disables printing entirely

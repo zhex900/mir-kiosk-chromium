@@ -49,17 +49,6 @@ plugs:
   x11-plug: # because cannot have identical plug/slot name in same yaml.
     interface: x11
 
-passthrough:
-  layout:
-    /usr/share/fonts:
-      bind: $SNAP/usr/share/fonts
-    /usr/share/X11:
-      bind: $SNAP/usr/share/X11
-    /usr/lib/xorg:
-      bind: $SNAP/usr/lib/xorg
-    /usr/bin/xkbcomp:
-      bind-file: $SNAP/usr/bin/xkbcomp
-
 parts:
   ppa-build:
     plugin: nil
@@ -115,8 +104,12 @@ parts:
       i3.config: etc/
 
   xwayland:
-    plugin: nil
+    plugin: cmake
+    source: xwayland-preload
+    build-packages:
+      - build-essential
     stage-packages:
       - xwayland
-      - libegl1-mesa
       - i3
+      - libegl1-mesa
+      - libgl1-mesa-glx

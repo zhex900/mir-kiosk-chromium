@@ -30,6 +30,9 @@ done
 # Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1738197 is fixed)
 [ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
 
+# desktop-helpers not setting this right??
+export FONTCONFIG_FILE=${XDG_CONFIG_HOME}/fontconfig/fonts.conf
+
 SNAPPY_PRELOAD=$SNAP \
 LD_PRELOAD=$SNAP/lib/libxwayland-preload.so \
 XDG_RUNTIME_DIR=$WAYLAND_SOCKET_DIR \
@@ -37,7 +40,7 @@ XDG_RUNTIME_DIR=$WAYLAND_SOCKET_DIR \
 trap "trap - SIGTERM && kill $pid" SIGINT SIGTERM EXIT # kill on signal or quit
 
 sleep 1 #FIXME: racey
-DISPLAY=:${port} $SNAP/usr/bin/i3 -c $SNAP/etc/i3.config
+DISPLAY=:${port} $SNAP/usr/bin/i3 -c $SNAP/etc/i3.config &
 
 _is_json_array() {
     [[ $(echo $1 | jq '.[]' &> /dev/null; echo $?) == 0 ]]
@@ -54,40 +57,51 @@ reset="$(snapctl get resettime)"
 shownav="$(snapctl get shownav)"
 # Hide cursor (true/false)
 hidecursor="$(snapctl get hidecursor)"
+# Disable kiosk mode (true/false)
+disablekiosk="$(snapctl get disablekiosk)"
 
-# Prepare extension - copy from read-only filesystem, and generate settings.js
-cp -R $SNAP/etc/chromium-browser/kiosk-app /tmp
-cat >/tmp/kiosk-app/js/settings.js <<EOL
+EXTRA_ARGS=""
+
+if [[ $disablekiosk == "false" ]]; then
+  # Configure Chromium to load kiosk extension
+  EXTRA_ARGS="--load-and-launch-app=/tmp/kiosk-app --silent-launch"
+  # "load-and-launch-app" loads app extension source from a directory, and launches
+  # "silent-launch" prevents normal Chromium window opening first
+
+  # Prepare extension - copy from read-only filesystem, and generate settings.js
+  cp -R $SNAP/etc/chromium-browser/kiosk-app /tmp
+  cat >/tmp/kiosk-app/js/settings.js <<EOL
 var kiosk_settings = {
-"url": ${url},
-"reset": ${reset},
-"allowprint": false,
-"shownav": ${shownav},
-"local": false,
-"remote": false,
-"username": "",
-"password": "",
-"restart": false,
-"remoteschedule": false,
-"hidegslidescontrols": true,
-"hidecursor": ${hidecursor},
-"disablecontextmenu": true,
-"disabledrag": true,
-"disabletouchhighlight": true,
-"disableselection": true,
-"resetcache": false,
-"partition": false,
-"allownewwindow": false,
-"screensavertime": 0,
-"screensaverURL": "",
-"clearcookiesreset": true,
-"whitelist": "",
-"useragent": "",
-"authorization": "",
-"multipleurlmode": "",
-"rotaterate": "",
+  "url": ${url},
+  "reset": ${reset},
+  "allowprint": false,
+  "shownav": ${shownav},
+  "local": false,
+  "remote": false,
+  "username": "",
+  "password": "",
+  "restart": false,
+  "remoteschedule": false,
+  "hidegslidescontrols": true,
+  "hidecursor": ${hidecursor},
+  "disablecontextmenu": true,
+  "disabledrag": true,
+  "disabletouchhighlight": true,
+  "disableselection": true,
+  "resetcache": false,
+  "partition": false,
+  "allownewwindow": false,
+  "screensavertime": 0,
+  "screensaverURL": "",
+  "clearcookiesreset": true,
+  "whitelist": "",
+  "useragent": "",
+  "authorization": "",
+  "multipleurlmode": "",
+  "rotaterate": "",
 }
 EOL
+fi
 
 # Chromium bringup
 DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
@@ -104,13 +118,10 @@ DISPLAY=:${port} "$SNAP/usr/lib/chromium-browser/chromium-browser" \
         --disable-gpu-sandbox \
         --dbus-stub \
         --enable-logging=stderr \
+        --password-store=basic \
         --ignore-gpu-blacklist --enable-native-gpu-memory-buffers \
         --class=chromium \
-        --profile-directory=Default #\
-        #--load-and-launch-app=/tmp/kiosk-app \
-        #--silent-launch
+        --profile-directory=Default $EXTRA_ARGS
         # Cannot run as root and be sandboxed at the same time, but then need
         # to hide the "warning sandboxing disabled" banner
         # kiosk-printing disables printing entirely
-        # "load-and-launch-app" loads app extension source from a directory, and launches
-        # "silent-launch" prevents normal Chromium window opening first

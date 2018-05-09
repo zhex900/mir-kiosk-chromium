@@ -5,4 +5,5 @@ snapctl set \
     url="https://www.ubuntu.com/internet-of-things" \
     resettime="5" \
     shownav="false" \
-    hidecursor="false"
+    hidecursor="false" \
+    disablekiosk="false"

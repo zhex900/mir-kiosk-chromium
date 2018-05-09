@@ -58,8 +58,9 @@ validate_boolean() {
 
 
 validate_urls         $(snapctl get url)
-validate_nonneg_float $(snapctl get resettime)  "resettime"
-validate_boolean      $(snapctl get shownav)    "shownav"
-validate_boolean      $(snapctl get hidecursor) "hidecursor"
+validate_nonneg_float $(snapctl get resettime)    "resettime"
+validate_boolean      $(snapctl get shownav)      "shownav"
+validate_boolean      $(snapctl get hidecursor)   "hidecursor"
+validate_boolean      $(snapctl get disablekiosk) "disablekiosk"
 
 snapctl restart $SNAP_NAME

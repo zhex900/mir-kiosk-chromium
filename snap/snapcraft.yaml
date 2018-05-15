@@ -30,6 +30,7 @@ apps:
       - opengl
       - password-manager-service
       - pulseaudio
+      - removable-media
       - screen-inhibit-control
       - wayland
       - x11-plug

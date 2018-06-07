@@ -24,7 +24,6 @@ apps:
       - gsettings
       - hardware-observe
       - home
-      - mir # due to mir-kiosk using /dev/shm in wayland implementation
       - mount-observe
       - network
       - network-manager

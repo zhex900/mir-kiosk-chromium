@@ -3,21 +3,40 @@
 # Xwayland needs to run as root (bug lp:1767372), so everything has to
 if [ "$EUID" -ne 0 ]
     then echo "This needs to run as root"
-    exit
+    exit 2
 fi
 
-WAYLAND_SOCKET_DIR=$SNAP_DATA/wayland
+# Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1738197 is fixed)
+[ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
 
-# Ensure wayland-socket-dir connection established
-if [ ! -d $WAYLAND_SOCKET_DIR ]; then
+wdisplay="wayland-0"
+if [ -n "$WAYLAND_DISPLAY" ]; then
+    wdisplay="$WAYLAND_DISPLAY"
+fi
+wayland_sockpath="$XDG_RUNTIME_DIR/../$wdisplay"
+wayland_snappath="$XDG_RUNTIME_DIR/$wdisplay"
+
+# Verify accessible Wayland socket - opening it only way to be sure
+attempted_open=$(cat "$wayland_sockpath" 2>&1)
+
+if [ -S "$wayland_sockpath" ] && ! [[ $attempted_open = *"Permission denied"* ]]; then
+    # if running under wayland, use it
+    #export WAYLAND_DEBUG=1
+    # create the compat symlink for now
+    if [ ! -e "$wayland_snappath" ]; then
+        ln -s "$wayland_sockpath" "$wayland_snappath"
+    fi
+else
+    echo "Error: Unable to open a valid Wayland socket!"
+    echo ""
     echo "##################################################################################"
-    echo "You need to connect this snap to one which implements the wayland-socket-dir plug."
+    echo "You need to connect this snap to one which implements the 'wayland' plug."
     echo ""
     echo "You can do this with these commands:"
-    echo "  snap install mir-kiosk --beta"
-    echo "  snap connect $SNAP_NAME:wayland-socket-dir mir-kiosk:wayland-socket-dir"
+    echo "  snap install mir-kiosk"
+    echo "  snap connect $SNAP_NAME:wayland mir-kiosk:wayland"
     echo "##################################################################################"
-    exit 1
+    exit 1;
 fi
 
 # XWayland bringup
@@ -27,15 +46,11 @@ while [ -e "/tmp/.X11-unix/X${port}" ]; do
     let port+=1
 done
 
-# Create $XDG_RUNTIME_DIR if not exists (to be removed when LP: #1738197 is fixed)
-[ -n "$XDG_RUNTIME_DIR" ] && mkdir -p $XDG_RUNTIME_DIR -m 700
-
 # desktop-helpers not setting this right??
 export FONTCONFIG_FILE=${XDG_CONFIG_HOME}/fontconfig/fonts.conf
 
 SNAPPY_PRELOAD=$SNAP \
 LD_PRELOAD=$SNAP/lib/libxwayland-preload.so \
-XDG_RUNTIME_DIR=$WAYLAND_SOCKET_DIR \
     $SNAP/usr/bin/Xwayland -terminate :${port} & pid=$!
 trap "trap - SIGTERM && kill $pid" SIGINT SIGTERM EXIT # kill on signal or quit
 

@@ -1,5 +1,5 @@
 name: chromium-mir-kiosk
-version: 67.0.3396.62
+version: 68.0.3440.84
 summary: Chromium web browser in Kiosk mode on Mir
 description: |
  An open-source browser project that aims to build a safer, faster, and more
@@ -40,12 +40,6 @@ plugs:
     interface: browser-support
     allow-sandbox: true
 
-  wayland-socket-dir:
-    content: wayland-socket-dir
-    interface: content
-    target: $SNAP_DATA/wayland
-    default-provider: mir-kiosk
-
   x11-plug: # because cannot have identical plug/slot name in same yaml.
     interface: x11
 
@@ -61,7 +55,7 @@ parts:
       - pulseaudio
     prepare: |
       apt install software-properties-common
-      V=67.0.3396.62-0ubuntu0.16.04.1
+      V=68.0.3440.84-0ubuntu0.16.04.1
       add-apt-repository -y ppa:chromium-team/stable
       apt update
       apt install -y chromium-browser=$V chromium-browser-l10n=$V chromium-codecs-ffmpeg-extra=$V

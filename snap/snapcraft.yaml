@@ -1,5 +1,5 @@
 name: chromium-mir-kiosk
-version: 68.0.3440.84
+version: 68.0.3440.106
 summary: Chromium web browser in Kiosk mode on Mir
 description: |
  An open-source browser project that aims to build a safer, faster, and more
@@ -8,13 +8,13 @@ confinement: strict
 grade: devel
 
 apps:
-  chromium:
-    command: desktop-launch chromium-browser.launcher
+  chromium-mir-kiosk:
+    command: desktop-launch xwayland-kiosk-launch chromium-browser.launcher
     daemon: simple
     desktop: usr/share/applications/chromium.desktop
     environment:
-      DISABLE_WAYLAND: 1
       CHROME_DESKTOP: chromium.desktop
+      XWAYLAND_I3_CONFIG_FILE: $SNAP/etc/i3.config
     slots: [ x11 ]
     plugs:
       - browser-sandbox
@@ -55,7 +55,7 @@ parts:
       - pulseaudio
     prepare: |
       apt install software-properties-common
-      V=68.0.3440.84-0ubuntu0.16.04.1
+      V=68.0.3440.106-0ubuntu0.16.04.1
       add-apt-repository -y ppa:chromium-team/stable
       apt update
       apt install -y chromium-browser=$V chromium-browser-l10n=$V chromium-codecs-ffmpeg-extra=$V
@@ -92,18 +92,8 @@ parts:
   launcher:
     plugin: dump
     source: glue
-    after: [desktop-gtk3]
+    after: [desktop-gtk3, xwayland-kiosk-helper]
     organize:
       chromium-browser.launcher: bin/
       i3.config: etc/
 
-  xwayland:
-    plugin: cmake
-    source: xwayland-preload
-    build-packages:
-      - build-essential
-    stage-packages:
-      - xwayland
-      - i3
-      - libegl1-mesa
-      - libgl1-mesa-glx

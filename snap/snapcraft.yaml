@@ -1,5 +1,7 @@
 name: chromium-mir-kiosk
-version: 68.0.3440.106
+version: snap
+version-script: |
+  env LANG=C apt-cache policy chromium-browser | sed -rne 's/^\s+Candidate:\s+(.*)-[^-]+$/\1/p'
 summary: Chromium web browser in Kiosk mode on Mir
 description: |
  An open-source browser project that aims to build a safer, faster, and more
@@ -55,10 +57,9 @@ parts:
       - pulseaudio
     prepare: |
       apt install software-properties-common
-      V=69.0.3497.92-0ubuntu0.16.04.1
       add-apt-repository -y ppa:chromium-team/stable
       apt update
-      apt install -y chromium-browser=$V chromium-browser-l10n=$V chromium-codecs-ffmpeg-extra=$V
+      apt install -y chromium-browser chromium-browser-l10n chromium-codecs-ffmpeg-extra
     install: |
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib
       cp -R /usr/lib/chromium-browser $SNAPCRAFT_PART_INSTALL/usr/lib/

@@ -1,11 +1,9 @@
 name: chromium-mir-kiosk
-version: snap
-version-script: |
-  env LANG=C apt-cache policy chromium-browser | sed -rne 's/^\s+Candidate:\s+(.*)-[^-]+$/\1/p'
 summary: Chromium web browser in Kiosk mode on Mir
 description: |
  An open-source browser project that aims to build a safer, faster, and more
  stable way for all Internet users to experience the web.
+adopt-info: ppa-build
 confinement: strict
 grade: devel
 
@@ -55,12 +53,12 @@ parts:
       - libgnome-keyring0
       - libnss3
       - pulseaudio
-    prepare: |
+    override-build: |
       apt install software-properties-common
-      add-apt-repository -y ppa:chromium-team/stable
-      apt update
+      add-apt-repository --yes --update ppa:chromium-team/stable
+      snapcraftctl set-version "$(env LANG=C apt-cache policy chromium-browser | sed -rne 's/^\s+Candidate:\s+(.*)-[^-]+$/\1/p')"
       apt install -y chromium-browser chromium-browser-l10n chromium-codecs-ffmpeg-extra
-    install: |
+      snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib
       cp -R /usr/lib/chromium-browser $SNAPCRAFT_PART_INSTALL/usr/lib/
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/bin
@@ -84,7 +82,8 @@ parts:
     source: https://git.launchpad.net/~gerboland/+git/chromium-kiosk-app-snap
     source-type: git
     stage-packages: [ jq ] # ease using JSON in Bash
-    install: |
+    override-build: |
+      snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       cp -R * $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/

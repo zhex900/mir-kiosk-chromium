@@ -82,8 +82,7 @@ parts:
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       cp -R * $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
-      find / -name chromium-policy.json
-      CHROME_POLICY=$(find / -name chromium-policy.json 2>&1 | head -n 1)
+      CHROME_POLICY=$(find / -name chromium-policy.json | grep "glue")
       echo $CHROME_POLICY
       cp $CHROME_POLICY $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
   xwayland-kiosk-helper:

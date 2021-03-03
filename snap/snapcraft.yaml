@@ -17,7 +17,6 @@ apps:
       XWAYLAND_I3_CONFIG_FILE: $SNAP/etc/i3.config
     slots: [ x11 ]
     plugs:
-      - browser-sandbox
       - camera
       - cups-control
       - desktop

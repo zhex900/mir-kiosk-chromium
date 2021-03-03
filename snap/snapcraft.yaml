@@ -86,6 +86,17 @@ parts:
       cp -R * $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
       cp ../../../glue/chromium-policy.json $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
+  xwayland-kiosk-helper:
+    build-packages:
+      - build-essential
+    plugin: cmake
+    source: https://github.com/MirServer/xwayland-kiosk-helper.git
+    source-subdir: xwayland-preload
+    stage-packages:
+      - xwayland
+      - i3
+      - libegl1-mesa
+      - libgl1-mesa-glx
   desktop-gtk3:
     build-packages:
       - build-essential

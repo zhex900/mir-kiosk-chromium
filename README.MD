@@ -81,6 +81,11 @@ Change `Restart` to `always`. `Restart=always`
 
 `sudo snap restart mir-kiosk-chromium`
 
+##TODO:
+
+1. Add travis.ci pipeline for auto build. 
+1. Add screenshot capability. 
+
 ##Reference:
 1. https://discourse.ubuntu.com/t/configuring-mir-kiosk-a-masterclass/8150
 1. https://discourse.ubuntu.com/t/install-mir-kiosk-and-chromium-mir-kiosk-under-ubuntu-18-04-server/13108/4

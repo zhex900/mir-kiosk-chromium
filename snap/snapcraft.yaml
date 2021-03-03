@@ -9,7 +9,7 @@ grade: stable
 
 apps:
   chromium-mir-kiosk:
-    command: desktop-launch xwayland-kiosk-launch chromium-browser.launcher --no-sandbox
+    command: desktop-launch xwayland-kiosk-launch chromium-browser.launcher
     daemon: simple
     desktop: usr/share/applications/chromium.desktop
     environment:
@@ -17,7 +17,6 @@ apps:
       XWAYLAND_I3_CONFIG_FILE: $SNAP/etc/i3.config
     slots: [ x11 ]
     plugs:
-      - browser-support
       - camera
       - cups-control
       - desktop
@@ -49,7 +48,6 @@ parts:
       - libgnome-keyring0
       - libnss3
       - pulseaudio
-    #      add-apt-repository --yes --update ppa:chromium-team/stable
     override-build: |
       apt install software-properties-common
       snapcraftctl set-version "$(env LANG=C apt-cache policy chromium-browser | sed -rne 's/^\s+Candidate:\s+(.*)-[^-]+$/\1/p')"

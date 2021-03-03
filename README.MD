@@ -14,13 +14,11 @@ Mir Kiosk Chromium enables to run web based kiosks on Ubuntu Core. This is forke
 
 This is tested on Ubuntu Core 18 and 20
 
-Download the built snap package to Ubuntu Core
-
 First install `mir-kiosk`
 
 `sudo snap install mir-kiosk`
 
-Install the snap package
+Install this snap package
 
 `sudo snap install ./mir-kiosk-chromium_87.0.4280.66_amd64.snap --dangerous --devmode`
 

@@ -94,4 +94,4 @@ parts:
     organize:
       chromium-browser.launcher: bin/
       i3.config: etc/
-
+base: core18

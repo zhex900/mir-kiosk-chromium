@@ -4,6 +4,10 @@ Mir Kiosk Chromium enables to run web based kiosks on Ubuntu Core. This is forke
 
 ## Build
 
+`git clone https://github.com/zhex900/mir-kiosk-chromium`
+
+`cd mir-kiosk-chromium`
+
 `docker run --rm -v $PWD:/project -w /project zhex900/snapcraft:core18 snapcraft`
 
 ## Install 

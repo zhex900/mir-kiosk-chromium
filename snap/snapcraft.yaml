@@ -86,7 +86,32 @@ parts:
       cp -R * $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
       cp ../../../glue/chromium-policy.json $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
-
+  desktop-qt5:
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
+    make-parameters:
+      - FLAVOR=qt5
+    plugin: make
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: qt
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5svg5
+      - try:
+          - appmenu-qt5
+      - locales-all
+      - xdg-user-dirs
+      - fcitx-frontend-qt5
   launcher:
     plugin: dump
     source: glue

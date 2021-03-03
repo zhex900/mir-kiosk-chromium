@@ -56,6 +56,7 @@ parts:
       apt install -y chromium-browser chromium-browser-l10n chromium-codecs-ffmpeg-extra
       snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib
+      chmod 751 /usr/lib/chromium-browser/chrome-sandbox
       cp -R /usr/lib/chromium-browser $SNAPCRAFT_PART_INSTALL/usr/lib/
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/bin
       cp /usr/bin/chromium-browser $SNAPCRAFT_PART_INSTALL/usr/bin/

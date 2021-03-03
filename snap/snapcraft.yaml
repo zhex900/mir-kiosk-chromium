@@ -84,7 +84,8 @@ parts:
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       cp -R * $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/kiosk-app
       mkdir -p $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
-      cp ../../../glue/chromium-policy.json $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
+      find / --name chromium-policy.json
+      cp /root/project/glue/chromium-policy.json $SNAPCRAFT_PART_INSTALL/etc/chromium-browser/policies/managed/
   xwayland-kiosk-helper:
     build-packages:
       - build-essential
@@ -113,6 +114,7 @@ parts:
       - adwaita-icon-theme
       - gnome-themes-standard
       - shared-mime-info
+      - libgtk2.0-0
       - libgtk-3-0
       - libgdk-pixbuf2.0-0
       - libglib2.0-bin

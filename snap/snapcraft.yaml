@@ -5,7 +5,7 @@ description: |
  stable way for all Internet users to experience the web.
 adopt-info: ppa-build
 confinement: strict
-grade: devel
+grade: stable
 
 apps:
   chromium-mir-kiosk:

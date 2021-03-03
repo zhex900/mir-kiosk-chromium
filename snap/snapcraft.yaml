@@ -6,9 +6,10 @@ description: |
 adopt-info: ppa-build
 confinement: strict
 grade: stable
+base: core18
 
 apps:
-  chromium-mir-kiosk:
+  mir-kiosk-chromium:
     command: desktop-launch xwayland-kiosk-launch chromium-browser.launcher
     daemon: simple
     desktop: usr/share/applications/chromium.desktop
@@ -132,4 +133,4 @@ parts:
     organize:
       chromium-browser.launcher: bin/
       i3.config: etc/
-base: core18
+

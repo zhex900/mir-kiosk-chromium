@@ -1,4 +1,4 @@
-name: chromium-mir-kiosk
+name: mir-kiosk-chromium
 summary: Chromium web browser in Kiosk mode on Mir
 description: |
  An open-source browser project that aims to build a safer, faster, and more

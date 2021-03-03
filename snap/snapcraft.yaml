@@ -36,8 +36,6 @@ apps:
       - x11-plug
 
 plugs:
-  browser-support:
-    allow-sandbox: false
   x11-plug: # because cannot have identical plug/slot name in same yaml.
     interface: x11
 

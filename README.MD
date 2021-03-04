@@ -1,6 +1,6 @@
 # Mir Kiosk Chromium 
 
-Mir Kiosk Chromium enables to run web based kiosks on Ubuntu Core. This is forked from Gerry Boland's [chromium-mir-kiosk](https://code.launchpad.net/~gerboland/+git/chromium-snap) 
+Mir Kiosk Chromium enables to run web based kiosks on Ubuntu Core. This is forked from Gerry Boland's [mir-kiosk-chromium](https://code.launchpad.net/~gerboland/+git/chromium-snap) 
 
 ## Build
 
@@ -26,23 +26,23 @@ Install this snap package
 
 To customize the startup url for chromium use:
 
-`sudo snap set chromium-mir-kiosk url="https://yoururl.com"`
+`sudo snap set mir-kiosk-chromium url="https://yoururl.com"`
 
 Set browser refresh interval. Default is 1hr (60 mins) 
 
-`sudo snap set chromium-mir-kiosk resettime=60`
+`sudo snap set mir-kiosk-chromium resettime=60`
 
 Show nav bar
 
-`sudo snap set chromium-mir-kiosk shownav=true`
+`sudo snap set mir-kiosk-chromium shownav=true`
 
 Hide cursor (true/false)
 
-`sudo snap set chromium-mir-kiosk hidecursor=true`
+`sudo snap set mir-kiosk-chromium hidecursor=true`
 
 Disable kiosk mode (true/false)
 
-`sudo snap set chromium-mir-kiosk disablekiosk=true`
+`sudo snap set mir-kiosk-chromium disablekiosk=true`
 
 ## Screen orientation
 
@@ -88,4 +88,4 @@ Change `Restart` to `always`. `Restart=always`
 
 ##Reference:
 1. https://discourse.ubuntu.com/t/configuring-mir-kiosk-a-masterclass/8150
-1. https://discourse.ubuntu.com/t/install-mir-kiosk-and-chromium-mir-kiosk-under-ubuntu-18-04-server/13108/4
+1. https://discourse.ubuntu.com/t/install-mir-kiosk-and-mir-kiosk-chromium-under-ubuntu-18-04-server/13108/4

@@ -19,9 +19,9 @@ apps:
     slots:
       - x11
     plugs:
-      - browser-support
-      - camera
-      - cups-control
+      - browser-sandbox
+#      - camera
+#      - cups-control
       - desktop
       - gsettings
       - hardware-observe
@@ -31,7 +31,7 @@ apps:
       - network-manager
       - opengl
       - password-manager-service
-      - pulseaudio
+#      - pulseaudio
       - removable-media
       - screen-inhibit-control
       - wayland

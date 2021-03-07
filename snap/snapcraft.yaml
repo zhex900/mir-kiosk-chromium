@@ -16,9 +16,10 @@ apps:
     environment:
       CHROME_DESKTOP: chromium.desktop
       XWAYLAND_I3_CONFIG_FILE: $SNAP/etc/i3.config
-    slots: [ x11 ]
+    slots:
+      - x11
     plugs:
-      - browser-sandbox
+      - browser-support
       - camera
       - cups-control
       - desktop
@@ -56,11 +57,11 @@ parts:
       - pulseaudio
     override-build: |
       apt install software-properties-common
-      add-apt-repository --yes --update ppa:chromium-team/stable
       snapcraftctl set-version "$(env LANG=C apt-cache policy chromium-browser | sed -rne 's/^\s+Candidate:\s+(.*)-[^-]+$/\1/p')"
       apt install -y chromium-browser chromium-browser-l10n chromium-codecs-ffmpeg-extra
       snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/lib
+      chmod 751 /usr/lib/chromium-browser/chrome-sandbox
       cp -R /usr/lib/chromium-browser $SNAPCRAFT_PART_INSTALL/usr/lib/
       mkdir -p $SNAPCRAFT_PART_INSTALL/usr/bin
       cp /usr/bin/chromium-browser $SNAPCRAFT_PART_INSTALL/usr/bin/
@@ -76,7 +77,7 @@ parts:
           -e "s:^Exec=chromium-browser\(.*\):Exec=chromium\1:g" \
           -e "s:^Icon=chromium-browser$:Icon=/usr/share/icons/hicolor/256x256/apps/chromium.png:" \
           $SNAPCRAFT_PART_INSTALL/usr/share/applications/chromium.desktop
-      chmod 4555 $SNAPCRAFT_PART_INSTALL/usr/lib/chromium-browser/chrome-sandbox
+      chmod 751 $SNAPCRAFT_PART_INSTALL/usr/lib/chromium-browser/chrome-sandbox
 
   kiosk-extension:
     plugin: nil
